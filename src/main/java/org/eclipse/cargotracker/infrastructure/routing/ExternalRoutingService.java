@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
@@ -23,6 +24,7 @@ import org.eclipse.cargotracker.domain.model.voyage.VoyageRepository;
 import org.eclipse.cargotracker.domain.service.RoutingService;
 import org.eclipse.pathfinder.api.TransitEdge;
 import org.eclipse.pathfinder.api.TransitPath;
+import org.jboss.resteasy.plugins.providers.jsonb.JsonBindingProvider;
 
 /**
  * Our end of the routing service. This is basically a data model translation layer between our
@@ -44,7 +46,9 @@ public class ExternalRoutingService implements RoutingService {
 
   @PostConstruct
   public void init() {
-    graphTraversalResource = ClientBuilder.newClient().target(graphTraversalUrl);
+    Client jaxrsClient = ClientBuilder.newClient();
+    jaxrsClient.register(JsonBindingProvider.class);
+    graphTraversalResource = jaxrsClient.target(graphTraversalUrl);
   }
 
   @Override

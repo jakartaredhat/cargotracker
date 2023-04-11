@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -24,7 +25,7 @@ public class Itinerary implements Serializable {
   public static final Itinerary EMPTY_ITINERARY = new Itinerary();
 
   // TODO [Clean Code] Look into why cascade delete doesn't work.
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinColumn(name = "cargo_id")
   @OrderColumn(name = "leg_order")
   @Size(min = 1)

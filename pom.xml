@@ -187,6 +187,99 @@
         </plugins>
       </build>
     </profile>
+    <!-- -->
+    <profile>
+      <id>wildfly</id>
+      <properties>
+        <wildfly.version>23.0.2.Final</wildfly.version>
+        <resteasy.version>3.14.0.Final</resteasy.version>
+        <!-- WildFly requires a DataSource implementation -->
+        <db.driverClass>org.h2.jdbcx.JdbcDataSource</db.driverClass>
+        <!-- H2 file engine requires an absolute path, eg. ~/name, ./name or a full-qualified
+            path name (it should include driver name under Windows). -->
+        <db.jdbcUrl>jdbc:h2:file:./cargo-tracker-data/cargo-tracker-database;create=true</db.jdbcUrl>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.jboss.resteasy</groupId>
+          <artifactId>resteasy-json-binding-provider</artifactId>
+          <version>${resteasy.version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- Embedding the JDBC driver in the WAR works in WildFly -->
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>1.4.200</version>
+          <scope>runtime</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.wildfly</groupId>
+          <artifactId>wildfly-arquillian-container-embedded</artifactId>
+          <version>8.2.1.Final</version>
+          <scope>test</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>sun.jdk</groupId>
+              <artifactId>jconsole</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.1.2</version>
+            <executions>
+              <execution>
+                <id>unpack</id>
+                <phase>process-test-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.wildfly</groupId>
+                      <artifactId>wildfly-dist</artifactId>
+                      <version>${wildfly.version}</version>
+                      <type>zip</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.build.directory}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M5</version>
+            <configuration>
+              <environmentVariables>
+                <JBOSS_HOME>${project.build.directory}/wildfly-${wildfly.version}</JBOSS_HOME>
+              </environmentVariables>
+              <systemPropertyVariables>
+                <arquillian.launch>wildfly-embedded</arquillian.launch>
+                <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.wildfly.plugins</groupId>
+            <artifactId>wildfly-maven-plugin</artifactId>
+            <version>2.1.0.Final</version>
+            <configuration>
+              <server-config>standalone-full.xml</server-config>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <!-- Cloud/production deployment using Payara and PostgreSQL. -->
     <profile>
       <id>cloud</id>

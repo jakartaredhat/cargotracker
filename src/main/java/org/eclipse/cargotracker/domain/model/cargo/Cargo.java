@@ -55,6 +55,12 @@ import org.eclipse.cargotracker.domain.shared.DomainObjectUtils;
 @NamedQuery(
     name = "Cargo.findByTrackingId",
     query = "Select c from Cargo c where c.trackingId = :trackingId")
+@NamedQuery(
+        name = "Cargo.findAllWithItineraryLegs",
+        query = "Select c from Cargo c join fetch c.itinerary.legs")
+@NamedQuery(
+        name = "Cargo.findByTrackingIdWithItineraryLegs",
+        query = "Select c from Cargo c join fetch c.itinerary.legs where c.trackingId = :trackingId")
 public class Cargo implements Serializable {
 
   private static final long serialVersionUID = 1L;

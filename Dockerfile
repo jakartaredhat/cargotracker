@@ -14,14 +14,15 @@ COPY src .
 
 RUN ./mvnw dependency:go-offline
 
-RUN ./mvnw -Ppayara package
+RUN ./mvnw -Pwildfly -DskipTests package
 RUN ls
 RUN pwd
 
-FROM payara/micro:5.2022.2-jdk11
+FROM jboss/wildfly:23.0.2.Final
 
-#COPY --from=build target/postgresql.jar /tmp
-COPY --from=build /build/target/cargo-tracker.war /opt/payara/deployments
+COPY --from=build /build/target/cargo-tracker.war /opt/jboss/wildfly/standalone/deployments/
 
 EXPOSE 8080
-CMD ["--deploymentDir", "/opt/payara/deployments", "--noCluster"]
+USER 1000
+
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]

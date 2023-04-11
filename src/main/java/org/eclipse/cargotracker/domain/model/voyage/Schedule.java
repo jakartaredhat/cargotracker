@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -23,7 +24,7 @@ public class Schedule implements Serializable {
   public static final Schedule EMPTY = new Schedule();
 
   // TODO [Clean Code] Look into why cascade delete doesn't work.
-  @OneToMany(cascade = CascadeType.ALL)
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinColumn(name = "voyage_id")
   @OrderColumn(name = "movement_order")
   @NotNull

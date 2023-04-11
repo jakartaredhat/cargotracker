@@ -125,7 +125,7 @@ public class EventLogger implements Serializable {
 
   @PostConstruct
   public void init() {
-    List<Cargo> cargos = cargoRepository.findAll();
+    List<Cargo> cargos = cargoRepository.findAllWithItineraryLegs();
 
     trackingIds = new ArrayList<>(cargos.size());
 

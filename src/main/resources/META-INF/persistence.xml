@@ -19,6 +19,7 @@
       <!-- The default log level of info is best for production, want to see verbose 
         output for development. -->
       <property name="eclipselink.logging.level" value="FINEST" />
+      <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
     </properties>
   </persistence-unit>
 </persistence>
