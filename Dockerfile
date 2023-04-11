@@ -18,8 +18,10 @@ RUN ./mvnw -Ppayara package
 RUN ls
 RUN pwd
 
-FROM payara/server-full:5.2022.4
+FROM payara/micro:5.2022.2-jdk11
 
 #COPY --from=build target/postgresql.jar /tmp
-COPY --from=build /build/target/cargo-tracker.war /tmp
-COPY post-boot-commands.asadmin /opt/payara/config/
+COPY --from=build /build/target/cargo-tracker.war /opt/payara/deployments
+
+EXPOSE 8080
+CMD ["--deploymentDir", "/opt/payara/deployments", "--noCluster"]
