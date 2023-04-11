@@ -25,4 +25,4 @@ COPY --from=build /build/target/cargo-tracker.war /opt/jboss/wildfly/standalone/
 EXPOSE 8080
 USER 1000
 
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-c", "standalone-full", ""-b", "0.0.0.0"]
