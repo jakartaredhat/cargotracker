@@ -3,10 +3,14 @@ package org.eclipse.cargotracker.interfaces.booking.web;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
+import java.util.logging.Logger;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.eclipse.cargotracker.interfaces.booking.facade.BookingServiceFacade;
 import org.eclipse.cargotracker.interfaces.booking.facade.dto.CargoRoute;
 
@@ -25,14 +29,18 @@ import org.eclipse.cargotracker.interfaces.booking.facade.dto.CargoRoute;
 public class ListCargo {
 
   @Inject private BookingServiceFacade bookingServiceFacade;
+  @Inject private Logger logger;
 
   private List<CargoRoute> notRoutedCargos;
   private List<CargoRoute> routedUnclaimedCargos;
   private List<CargoRoute> claimedCargos;
 
   @PostConstruct
+  @TransactionAttribute(TransactionAttributeType.REQUIRED)
   public void init() {
     List<CargoRoute> cargos = bookingServiceFacade.listAllCargos();
+    logger.info("All("+cargos.size()+") cargos: "+cargos);
+
     notRoutedCargos = cargos.stream().filter(route -> !route.isRouted()).collect(toList());
     routedUnclaimedCargos =
         cargos.stream().filter(route -> route.isRouted() && !route.isClaimed()).collect(toList());

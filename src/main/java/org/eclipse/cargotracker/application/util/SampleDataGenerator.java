@@ -4,16 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
 import org.eclipse.cargotracker.domain.model.cargo.Cargo;
 import org.eclipse.cargotracker.domain.model.cargo.Itinerary;
 import org.eclipse.cargotracker.domain.model.cargo.Leg;
@@ -129,6 +129,7 @@ public class SampleDataGenerator {
     abc123.assignToRoute(itinerary1);
 
     entityManager.persist(abc123);
+    logger.info("Saved: "+abc123);
 
     try {
       HandlingEvent event1 =
@@ -202,6 +203,7 @@ public class SampleDataGenerator {
     jkl567.assignToRoute(itinerary2);
 
     entityManager.persist(jkl567);
+    logger.info("Saved: "+jkl567);
 
     try {
       HandlingEvent event1 =
@@ -263,6 +265,14 @@ public class SampleDataGenerator {
 
     Cargo def789 = new Cargo(trackingId3, routeSpecification3);
     entityManager.persist(def789);
+    logger.info("Saved: "+def789);
+    /*
+    Itinerary itinerary3 = Itinerary.EMPTY_ITINERARY;
+    def789.assignToRoute(itinerary3);
+    entityManager.persist(def789);
+    logger.info("Updated: "+def789);
+     */
+
 
     // Cargo definition MNO456. This one will be claimed properly.
     TrackingId trackingId4 = new TrackingId("MNO456");
@@ -284,6 +294,7 @@ public class SampleDataGenerator {
 
     mno456.assignToRoute(itinerary4);
     entityManager.persist(mno456);
+    logger.info("Saved: "+mno456);
 
     try {
       HandlingEvent event1 =
@@ -347,6 +358,7 @@ public class SampleDataGenerator {
       mno456.deriveDeliveryProgress(handlingHistory3);
 
       entityManager.persist(mno456);
+      logger.info("Updated: "+mno456);
     } catch (CannotCreateHandlingEventException e) {
       throw new RuntimeException(e);
     }

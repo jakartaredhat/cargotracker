@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1"
-  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+              version="3.1">
   <persistence-unit name="CargoTrackerUnit">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
     <jta-data-source>java:app/jdbc/CargoTrackerDatabase</jta-data-source>
     <shared-cache-mode>ALL</shared-cache-mode>
     <properties>
-      <!-- The default behavior is not generating a schema. Schema generation is 
-        good for demos, RAD, development, etc but likely not a good idea for production. -->
-      <property
-        name="javax.persistence.schema-generation.database.action"
-        value="create" />
-      <!-- This will fail if it's not invoked on a blank database - this is fine. 
-        What this does is insert a single record that the application settings check can 
-        place a pessimistic lock on. -->
       <property name="javax.persistence.sql-load-script-source"
-        value="META-INF/initital-data.sql" />
-      <!-- The default log level of info is best for production, want to see verbose 
-        output for development. -->
-      <property name="eclipselink.logging.level" value="FINEST" />
+                value="META-INF/initital-data.sql" />
+
+      <property name="hibernate.archive.autodetection" value="class, hbm"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.connection.driver_class" value="org.h2.Driver"/>
+      <property name="hibernate.connection.url" value="jdbc:h2:mem:cargo-tracker;DB_CLOSE_DELAY=-1"/>
+
+      <property name="hibernate.connection.pool_size" value="5"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+      <property name="hibernate.session.events.log" value="true"/>
     </properties>
   </persistence-unit>
 </persistence>

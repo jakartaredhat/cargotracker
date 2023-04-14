@@ -21,9 +21,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.report.sourceEncoding>UTF-8</project.report.sourceEncoding>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <jakartaee-api.version>8.0.0</jakartaee-api.version>
+    <maven.compiler.release>11</maven.compiler.release>
+    <jakartaee-api.version>10.0.0</jakartaee-api.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -33,7 +32,7 @@
       <dependency>
         <groupId>org.jboss.arquillian</groupId>
         <artifactId>arquillian-bom</artifactId>
-        <version>1.6.0.Final</version>
+        <version>1.7.0.Alpha14</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
@@ -46,12 +45,15 @@
       <version>${jakartaee-api.version}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Required by Java SE 9+ -->
     <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-      <version>2.3.6</version>
-      <scope>provided</scope>
+      <groupId>jakarta.faces</groupId>
+      <artifactId>jakarta.faces-api</artifactId>
+      <version>4.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.ejb</groupId>
+      <artifactId>jakarta.ejb-api</artifactId>
+      <version>4.0.1</version>
     </dependency>
     <!-- The third-party dependencies this application has -->
     <dependency>
@@ -61,7 +63,8 @@
     <dependency>
       <groupId>org.primefaces</groupId>
       <artifactId>primefaces</artifactId>
-      <version>8.0</version>
+      <classifier>jakarta</classifier>
+      <version>12.0.0</version>
     </dependency>
     <!-- Test dependencies -->
     <dependency>
@@ -114,15 +117,17 @@
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+      </plugin>
     </plugins>
   </build>
   <profiles>
     <!-- The currently supported application servers are represented as profiles -->
     <profile>
       <id>payara</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
       <properties>
         <payara.version>5.2022.5</payara.version>
         <!-- Application properties -->
@@ -190,14 +195,17 @@
     <!-- -->
     <profile>
       <id>wildfly</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
-        <wildfly.version>23.0.2.Final</wildfly.version>
-        <resteasy.version>3.14.0.Final</resteasy.version>
+        <wildfly.version>27.0.1.Final</wildfly.version>
+        <resteasy.version>6.2.0.Final</resteasy.version>
         <!-- WildFly requires a DataSource implementation -->
         <db.driverClass>org.h2.jdbcx.JdbcDataSource</db.driverClass>
         <!-- H2 file engine requires an absolute path, eg. ~/name, ./name or a full-qualified
             path name (it should include driver name under Windows). -->
-        <db.jdbcUrl>jdbc:h2:file:./cargo-tracker-data/cargo-tracker-database;create=true</db.jdbcUrl>
+        <db.jdbcUrl>jdbc:h2:mem:cargo-tracker;DB_CLOSE_ON_EXIT=FALSE</db.jdbcUrl>
       </properties>
       <dependencies>
         <dependency>
@@ -211,13 +219,13 @@
         <dependency>
           <groupId>com.h2database</groupId>
           <artifactId>h2</artifactId>
-          <version>1.4.200</version>
+          <version>2.1.214</version>
           <scope>runtime</scope>
         </dependency>
         <dependency>
-          <groupId>org.wildfly</groupId>
-          <artifactId>wildfly-arquillian-container-embedded</artifactId>
-          <version>8.2.1.Final</version>
+          <groupId>org.wildfly.arquillian</groupId>
+          <artifactId>wildfly-arquillian-container-managed</artifactId>
+          <version>5.0.0.Alpha6</version>
           <scope>test</scope>
           <exclusions>
             <exclusion>
@@ -249,6 +257,7 @@
                       <type>zip</type>
                       <overWrite>false</overWrite>
                       <outputDirectory>${project.build.directory}</outputDirectory>
+
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -272,7 +281,7 @@
           <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
-            <version>2.1.0.Final</version>
+            <version>4.1.0.Beta5</version>
             <configuration>
               <server-config>standalone-full.xml</server-config>
             </configuration>

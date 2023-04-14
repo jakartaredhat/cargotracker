@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 
 import org.eclipse.cargotracker.application.util.DateConverter;
 import org.eclipse.cargotracker.domain.model.cargo.Cargo;
@@ -167,7 +167,6 @@ public class CargoTrackingViewAdapter {
       return DateConverter.toString(handlingEvent.getCompletionTime());
     }
 
-    @Transactional
     public boolean isExpected() {
       return cargo.getItinerary().isExpected(handlingEvent);
     }
